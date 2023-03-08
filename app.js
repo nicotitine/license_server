@@ -5,9 +5,9 @@ const bodyParser = require('body-parser');
 const helmet = require("helmet")
 
 const dev_db_url = "mongodb+srv://sbstats:adec594ea@cluster0.0rllv.mongodb.net/grobe_license?retryWrites=true&w=majority"
-const mongoDB = process.env.MONGODB_URI || dev_db_url;
+const mongoDB = process.env.MongoDB || dev_db_url;
 
-console.log(process.env.MONGODB_URI)
+console.log(process.env.MongoDB)
 
 mongoose.connect(mongoDB, { useNewUrlParser: true });
  
