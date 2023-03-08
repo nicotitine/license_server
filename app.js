@@ -7,6 +7,7 @@ const helmet = require("helmet")
 const dev_db_url = "mongodb+srv://sbstats:adec594ea@cluster0.0rllv.mongodb.net/grobe_license?retryWrites=true&w=majority"
 const mongoDB = process.env.MONGODB_URI || dev_db_url;
 
+console.log(process.env.MONGODB_URI)
 
 mongoose.connect(mongoDB, { useNewUrlParser: true });
  
