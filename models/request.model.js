@@ -16,6 +16,11 @@ const requestSchema = mongoose.Schema({
         enum: ["WAITING", "VALIDATED", "REVOKED"],
         default: "WAITING",
         required: true
+    },
+    v: {
+        type: String,
+        unique: false,
+        required: true
     }
 });
 
