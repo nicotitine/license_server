@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const requestSchema = mongoose.Schema({
-        pseudo: {
-                type: String,
-                unique: false,
-                required: true,
-        },
-        mac_address: {
+    pseudo: {
+        type: String,
+        unique: false,
+        required: true,
+    },
+    mac_address: {
         type: String,
         unique: true,
         required: true
