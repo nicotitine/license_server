@@ -47,10 +47,6 @@ server.on('listening', () => {
 });
 
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-
 let sockets = []
 
 function findSocketById(id) {
@@ -62,9 +58,9 @@ function findSocketBySocket(socket) {
 }
 
 io.on('connection', (socket) => {
-  console.log('a user connected');
-
+  
   socket.on('auth', async (ids) => {
+    console.log(ids.id + ' connected');
     sockets.push({
       'id': ids.id,
       'remote_id': ids.remote_id,
@@ -90,7 +86,7 @@ io.on('connection', (socket) => {
     remote_sock = findSocketById(ids.remote_id)
 
     if(remote_sock == undefined) return
-    
+
     if (remote_sock.remote_id == sock.id) {
       let remote_pseudo = await getPseudoFromId(remote_sock.id)
       let pseudo = await getPseudoFromId(sock.id)
