@@ -4,22 +4,16 @@ const { Server } = require("socket.io");
 
 const normalizePort = val => {
   const port = parseInt(val, 10);
-
-  if (isNaN(port)) {
-    return val;
-  }
-  if (port >= 0) {
-    return port;
-  }
+  if (isNaN(port)) return val;
+  if (port >= 0) return port;
   return false;
 };
 const port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
 const errorHandler = error => {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+  if (error.syscall !== 'listen') throw error;
+
   const address = server.address();
   const bind = typeof address === 'string' ? 'pipe ' + address : 'port: ' + port;
   switch (error.code) {
@@ -79,11 +73,11 @@ io.on('connection', (socket) => {
   })
 
   socket.on('update_remote_id', async (ids) => {
-    sock = findSocketById(ids.id)
+    let sock = findSocketById(ids.id)
     sock.remote_id = ids.remote_id
     console.log(ids.id + ' remote_id updated to: ' + ids.remote_id)
 
-    remote_sock = findSocketById(ids.remote_id)
+    let remote_sock = findSocketById(ids.remote_id)
 
     if(remote_sock == undefined) return
 
@@ -100,11 +94,10 @@ io.on('connection', (socket) => {
     console.log('notify received from ' + params.id);
     let sock = findSocketById(params.id)
     let remote_sock = findSocketById(sock.remote_id)
-    if (remote_sock == undefined) {
-      socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': 'notify'})
-    }
+
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': 'notify'})
     else if (sock.id == remote_sock.remote_id) {
-      console.log('emit notify')
+      console.log('emit notify to ' + remote_sock.id)
       remote_sock.socket.emit('notify', {'title': params.title, 'message': params.message})
     }
   }) 
@@ -113,46 +106,55 @@ io.on('connection', (socket) => {
     console.log('ask_tp received from ' + id)
     let sock = findSocketById(id)
     let remote_sock = findSocketById(sock.remote_id)
-    if (remote_sock == undefined) {
-      socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_tp' })
-    }
+
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_tp' })
     else if (sock.id == remote_sock.remote_id) {
-      console.log('emit tp')
+      console.log('emit tp to ' + remote_sock.id)
       remote_sock.socket.emit('tp')
     }
   })
 
   socket.on('ask_anti_afk', (id) => {
     console.log('ask_anti_afk received from ' + id)
-    sock = findSocketById(id)
-    remote_sock = findSocketById(sock.remote_id)
-    if (remote_sock == undefined) {
-      socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_anti_afk' })
-    }
+    let sock = findSocketById(id)
+    let remote_sock = findSocketById(sock.remote_id)
+
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_anti_afk' })
     else if (sock.id == remote_sock.remote_id) {
-      console.log('emit anti_afk')
+      console.log('emit anti_afk to ' + remote_sock.id)
       remote_sock.socket.emit('anti_afk')
     }
   })
 
   socket.on('ask_switch', (id) => {
     console.log('ask_switch received from ' + id)
-    sock = findSocketById(id)
-    remote_sock = findSocketById(sock.remote_id)
-    if (remote_sock == undefined) {
-      socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_switch' })
-    }
+    let sock = findSocketById(id)
+    let remote_sock = findSocketById(sock.remote_id)
+
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_switch' })
     else if (sock.id == remote_sock.remote_id) {
-      console.log('emit switch')
+      console.log('emit switch to ' + remote_sock.id)
       remote_sock.socket.emit('switch')
     }
   })
 
-  socket.on('disconnect', function () {
+  socket.on('ask_screen', (id) => {
+    console.log('ask_screen received from ' + id)
+    sock = findSocketById(id)
+    remote_sock = findSocketById(sock.remote_id)
 
-    let i = sockets.indexOf(findSocketBySocket(socket));
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': 'ask_screen'})
+    else if (sock.id == remote_sock.remote_id) {
+      console.log('emit screen to ' + remote_sock.id)
+      remote_sock.socket.emit('screen')
+    }
+  })
+
+  socket.on('disconnect', function () {
+    let sock = findSocketBySocket(socket)
+    console.log(sock.id + ' disconnected. Socket count: ' + sockets.length);
+    let i = sockets.indexOf(sock);
     sockets.splice(i, 1);
-    console.log('socket disconnected. Sockets: ' + sockets.length);
   });
 
 });
