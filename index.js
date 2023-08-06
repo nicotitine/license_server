@@ -152,7 +152,7 @@ io.on('connection', (socket) => {
 
   socket.on('disconnect', function () {
     let sock = findSocketBySocket(socket)
-    log(sock.id + ' disconnected. Socket count: ' + sockets.length);
+    log(sock.id + ' disconnected. Socket count: ' + sockets.length - 1);
     let i = sockets.indexOf(sock);
     sockets.splice(i, 1);
   });
