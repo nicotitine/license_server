@@ -15,7 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(helmet())
 
 app.post('/new_request', async (req, res) => {
-    console.log("New request from " + req.body.pseudo)
+    log("New request from " + req.body.pseudo)
     const mac_address = req.body.mac_address;
     const data = await Request.findOne({'mac_address': mac_address});
     if (VERSION.localeCompare(req.body.v, undefined, {numeric: true, sensitivity: 'base'}) > 0) {
@@ -24,7 +24,7 @@ app.post('/new_request', async (req, res) => {
     }
 
     if(!data) {
-        console.log("Request not found, creating a new one...")
+        log("Request not found, creating a new one...")
         const request = await Request.create({
             pseudo: req.body.pseudo,
             'mac_address': mac_address,
@@ -34,7 +34,7 @@ app.post('/new_request', async (req, res) => {
         res.send(request);
     } else {
         res.send(data);
-        console.log("Request already exists, sending it...")
+        log("Request already exists, sending it...")
     }
 })
 
@@ -43,6 +43,10 @@ async function getPseudoFromId(id) {
     if(data == undefined) return ''
     return data.pseudo
 } 
+
+function log(text) {
+    console.log(new Date().toJSON() + '\t' + text)
+  }
 
 app.get('/get_license', async (req, res, next) => {
     const mac_address = req.body.mac_address;
@@ -56,11 +60,11 @@ app.get('/get_license', async (req, res, next) => {
         res.send(data);
         return;
     }
-    console.log("Get license request from " + data.pseudo)
+    log("Get license request from " + data.pseudo)
     if (VERSION.localeCompare(req.body.v, undefined, {numeric: true, sensitivity: 'base'}) > 0) data.status = "UPDATE"
     if (mac_address !== data.mac_address) data.status = "FORBIDEN";
     res.send(data);
-    console.log("License status: " + data.status)
+    log("License status: " + data.status)
 })
 
-module.exports = {app, getPseudoFromId};
+module.exports = {app, getPseudoFromId, log};

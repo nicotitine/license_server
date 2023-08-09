@@ -1,4 +1,4 @@
-const {app, getPseudoFromId} = require('./app');
+const {app, getPseudoFromId, log} = require('./app');
 const http = require('http');
 const { Server } = require("socket.io");
 
@@ -158,10 +158,6 @@ io.on('connection', (socket) => {
   });
 
 });
-
-function log(text) {
-  console.log(new Date().toJSON() + '\t' + text)
-}
 
 function error(text) {
   console.error(new Date().toJSON() + '\t' + text)
