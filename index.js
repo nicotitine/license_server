@@ -103,51 +103,23 @@ io.on('connection', (socket) => {
   }) 
 
   socket.on('ask_tp', (id) => {
-    log('ask_tp received from ' + id)
-    let sock = findSocketById(id)
-    let remote_sock = findSocketById(sock.remote_id)
-
-    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_tp' })
-    else if (sock.id == remote_sock.remote_id) {
-      log('emit tp to ' + remote_sock.id)
-      remote_sock.socket.emit('tp')
-    }
+    process_request(socket, id, 'ask_tp', 'tp')
   })
 
   socket.on('ask_anti_afk', (id) => {
-    log('ask_anti_afk received from ' + id)
-    let sock = findSocketById(id)
-    let remote_sock = findSocketById(sock.remote_id)
-
-    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_anti_afk' })
-    else if (sock.id == remote_sock.remote_id) {
-      log('emit anti_afk to ' + remote_sock.id)
-      remote_sock.socket.emit('anti_afk')
-    }
+    process_request(socket, id, 'ask_anti_afk', 'anti_afk')
   })
 
   socket.on('ask_switch', (id) => {
-    log('ask_switch received from ' + id)
-    let sock = findSocketById(id)
-    let remote_sock = findSocketById(sock.remote_id)
-
-    if (remote_sock == undefined) socket.emit('wrong_remote_id', { 'remote_id': sock.remote_id, 'request': 'ask_switch' })
-    else if (sock.id == remote_sock.remote_id) {
-      log('emit switch to ' + remote_sock.id)
-      remote_sock.socket.emit('switch')
-    }
+    process_request(socket, id, 'ask_switch', 'switch')
   })
 
   socket.on('ask_screen', (id) => {
-    log('ask_screen received from ' + id)
-    sock = findSocketById(id)
-    remote_sock = findSocketById(sock.remote_id)
+    process_request(socket, id, 'ask_screen', 'screen')
+  })
 
-    if (remote_sock == undefined) socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': 'ask_screen'})
-    else if (sock.id == remote_sock.remote_id) {
-      log('emit screen to ' + remote_sock.id)
-      remote_sock.socket.emit('screen')
-    }
+  socket.on('ask_spec', (id) => {
+    process_request(socket, id, 'ask_spec', 'spec')
   })
 
   socket.on('disconnect', function () {
@@ -158,6 +130,18 @@ io.on('connection', (socket) => {
   });
 
 });
+
+function process_request(socket, id, request, response) {
+  log(request + ' received from ' + id)
+    let sock = findSocketById(id)
+    let remote_sock = findSocketById(sock.remote_id)
+
+    if (remote_sock == undefined) socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': request})
+    else if (sock.id == remote_sock.remote_id) {
+      log('emit + ' + response + ' to ' + remote_sock.id)
+      remote_sock.sock.emit(response)
+    }
+}
 
 function error(text) {
   console.error(new Date().toJSON() + '\t' + text)
