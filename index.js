@@ -158,7 +158,7 @@ io.on('connection', (socket) => {
     if (remote_sock == undefined) socket.emit('wrong_remote_id', {'remote_id': sock.remote_id, 'request': 'ask_spec'})
     else if (sock.id == remote_sock.remote_id) {
       log('emit spec to ' + remote_sock.id)
-      remote_sock.sock.emit('spec')
+      remote_sock.socket.emit('spec')
     }
   })
 
