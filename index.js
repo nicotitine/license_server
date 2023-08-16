@@ -66,7 +66,7 @@ io.on('connection', async (socket) => {
 		let pretented_remote = findSocketById(ids.remote_id)
 		if (pretented_remote == undefined) return
 		if (pretented_remote.remote_id == ids.id) {
-			log(pretented_remote.pseudo + ' and ' + pretented_remote.pseudo + ' handchecked')
+			log(pretented_remote.pseudo + ' and ' + newSocket.pseudo + ' handchecked')
 			pretented_remote.socket.emit('connexion_successful', newSocket.pseudo)
 			socket.emit('connexion_successful', pretented_remote.pseudo)
 		}
