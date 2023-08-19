@@ -172,7 +172,7 @@ io.on('connection', async (socket) => {
 		let i = sockets.indexOf(sock);
 		sockets.splice(i, 1);
 
-		if (remote_sock != undefined) remote_sock.socket.emit('remote_disconnected')
+		if (remote_sock != undefined && sock.remote_id == remote_sock.id) remote_sock.socket.emit('remote_disconnected')
 	});
 
 });
