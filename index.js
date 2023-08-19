@@ -74,11 +74,17 @@ io.on('connection', async (socket) => {
 
 	socket.on('update_remote_id', async (ids) => {
 		let sock = findSocketById(ids.id)
+		let old_remote_sock = findSocketById(sock.remote_id)
+		if (old_remote_sock != undefined) old_remote_sock.socket.emit('remote_disconnected')
+
 		sock.remote_id = ids.remote_id
 		log(sock.pseudo + ' remote_id updated to: ' + ids.remote_id)
 
 		let remote_sock = findSocketById(ids.remote_id)
-		if (remote_sock == undefined) return
+		if (remote_sock == undefined) {
+			sock.socket.emit('remote_disconnected')
+			return
+		}
 
 		if (remote_sock.remote_id == sock.id) {
 			remote_sock.socket.emit('connexion_successful', sock.pseudo)
@@ -161,9 +167,12 @@ io.on('connection', async (socket) => {
 
 	socket.on('disconnect', function () {
 		let sock = findSocketBySocket(socket)
+		let remote_sock = findSocketById(sock.remote_id)
 		log(sock.pseudo + ' disconnected. Socket count: ' + (sockets.length - 1));
 		let i = sockets.indexOf(sock);
 		sockets.splice(i, 1);
+
+		if (remote_sock != undefined) remote_sock.socket.emit('remote_disconnected')
 	});
 
 });
