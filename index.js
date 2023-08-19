@@ -75,7 +75,7 @@ io.on('connection', async (socket) => {
 	socket.on('update_remote_id', async (ids) => {
 		let sock = findSocketById(ids.id)
 		let old_remote_sock = findSocketById(sock.remote_id)
-		if (old_remote_sock != undefined) old_remote_sock.socket.emit('remote_disconnected')
+		if (old_remote_sock != undefined && old_remote_sock.remote_id == sock.id) old_remote_sock.socket.emit('remote_disconnected')
 
 		sock.remote_id = ids.remote_id
 		log(sock.pseudo + ' remote_id updated to: ' + ids.remote_id)
