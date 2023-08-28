@@ -74,7 +74,9 @@ io.on('connection', async (socket) => {
 
 	socket.on('update_remote_id', async (ids) => {
 		let sock = findSocketById(ids.id)
+		if (sock == undefined) return
 		let old_remote_sock = findSocketById(sock.remote_id)
+
 		if (old_remote_sock != undefined && old_remote_sock.remote_id == sock.id) old_remote_sock.socket.emit('remote_disconnected')
 
 		sock.remote_id = ids.remote_id
@@ -95,6 +97,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('notify', (params) => {
 		let sock = findSocketById(params.id)
+		if (sock == undefined) return
 		log('notify received from ' + sock.pseudo);
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -107,6 +110,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('ask_tp', (id) => {
 		let sock = findSocketById(id)
+		if (sock == undefined) return
 		log('ask_tp received from ' + sock.pseudo)
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -119,6 +123,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('ask_anti_afk', (id) => {
 		let sock = findSocketById(id)
+		if (sock == undefined) return
 		log('ask_anti_afk received from ' + sock.pseudo)
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -131,6 +136,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('ask_switch', (id) => {
 		let sock = findSocketById(id)
+		if (sock == undefined) return
 		log('ask_switch received from ' + sock.pseudo)
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -143,6 +149,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('ask_screen', (id) => {
 		let sock = findSocketById(id)
+		if (sock == undefined) return
 		log('ask_screen received from ' + sock.pseudo)
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -155,6 +162,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('ask_spec', (id) => {
 		let sock = findSocketById(id)
+		if (sock == undefined) return
 		log('ask_spec received from ' + sock.pseudo)
 		let remote_sock = findSocketById(sock.remote_id)
 
@@ -167,6 +175,7 @@ io.on('connection', async (socket) => {
 
 	socket.on('disconnect', function () {
 		let sock = findSocketBySocket(socket)
+		if (sock == undefined) return
 		let remote_sock = findSocketById(sock.remote_id)
 		log(sock.pseudo + ' disconnected. Socket count: ' + (sockets.length - 1));
 		let i = sockets.indexOf(sock);
