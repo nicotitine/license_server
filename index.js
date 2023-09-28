@@ -173,7 +173,7 @@ io.on('connection', async (socket) => {
 		}
 	})
 
-	socket.on('ask_close_fight', () => {
+	socket.on('ask_close_fight', (id) => {
 		let sock = findSocketById(id)
 		if (sock == undefined) return
 		log('ask_close_fight received from ' + sock.pseudo)
