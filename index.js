@@ -173,6 +173,20 @@ io.on('connection', async (socket) => {
 		}
 	})
 
+	socket.on('ask_close_fight', () => {
+		let sock = findSocketById(id)
+		if (sock == undefined) return
+		log('ask_close_fight received from ' + sock.pseudo)
+		let remote_sock = findSocketById(sock.remote_id)
+
+		if (remote_sock == undefined) socket.emit('wrong_remite_id', { 'remote_id': sock.remote_id, 'request': 'ask_close_fight'})
+		else if (sock.id == remote_sock.remote_id) {
+			remote_sock.socket.emit('close_fight')
+			log('emit close_fight to ' + remote_sock.pseudo)
+		}
+
+	})
+
 	socket.on('disconnect', function () {
 		let sock = findSocketBySocket(socket)
 		if (sock == undefined) return
