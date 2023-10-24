@@ -51,6 +51,8 @@ function log(text) {
 app.get('/get_license', async (req, res, next) => {
 	const mac_address = req.body.mac_address;
 	const id = req.body.id;
+	const version = req.body.v;
+	console.log(req.body)
 	if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
 		res.send(null);
 		return;
@@ -60,10 +62,16 @@ app.get('/get_license', async (req, res, next) => {
 		res.send(data);
 		return;
 	}
-	if (VERSION.localeCompare(req.body.v, undefined, { numeric: true, sensitivity: 'base' }) > 0) data.status = "UPDATE"
+	let version_log = ''
+	if (version.localeCompare(data.v, undefined, {numeric: true, sensitivity: 'base'}) > 0) {
+		version_log = ' | Update from ' + data.v + ' to ' + version + ' detected'
+		data.v = version
+		data.save()
+	}
+	if (VERSION.localeCompare(version, undefined, { numeric: true, sensitivity: 'base' }) > 0) data.status = "UPDATE"
 	if (mac_address !== data.mac_address) data.status = "FORBIDEN";
 	res.send(data);
-	log("Get license request from " + data.pseudo + ' | License status: ' + data.status)
+	log("Get license request from " + data.pseudo + ' | License status: ' + data.status + version_log)
 })
 
 module.exports = { app, getPseudoFromId, log };
