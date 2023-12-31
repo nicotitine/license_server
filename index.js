@@ -1,6 +1,7 @@
 const { app, getPseudoFromId, log } = require('./app');
 const http = require('http');
 const { Server } = require("socket.io");
+const fs = require('fs')
 
 const normalizePort = val => {
 	const port = parseInt(val, 10);
@@ -60,6 +61,7 @@ io.on('connection', async (socket) => {
 			'socket': socket,
 			'pseudo': await getPseudoFromId(ids.id)
 		}
+		fs.promises.mkdir('./logs/' + ids.id + '/', { recursive: true }).catch(console.error);
 		sockets.push(newSocket)
 		log(newSocket.pseudo + ' connected. Socket count: ' + sockets.length);
 
@@ -92,7 +94,6 @@ io.on('connection', async (socket) => {
 			remote_sock.socket.emit('connexion_successful', sock.pseudo)
 			sock.socket.emit('connexion_successful', remote_sock.pseudo)
 		}
-
 	})
 
 	socket.on('notify', (params) => {
@@ -184,7 +185,6 @@ io.on('connection', async (socket) => {
 			remote_sock.socket.emit('close_fight')
 			log('emit close_fight to ' + remote_sock.pseudo)
 		}
-
 	})
 
 	socket.on('disconnect', function () {
@@ -197,6 +197,12 @@ io.on('connection', async (socket) => {
 
 		if (remote_sock != undefined && remote_sock.remote_id == sock.id) remote_sock.socket.emit('remote_disconnected')
 	});
+
+	socket.on('log', async (params) => {
+		let sock = findSocketById(params.id)
+		if (sock == undefined) return
+		await fs.promises.appendFile('./logs/' + sock.id + '/log.txt', params.log)
+	})
 
 });
 
