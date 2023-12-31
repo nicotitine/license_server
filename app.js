@@ -52,7 +52,6 @@ app.get('/get_license', async (req, res, next) => {
 	const mac_address = req.body.mac_address;
 	const id = req.body.id;
 	const version = req.body.v;
-	console.log(req.body)
 	if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
 		res.send(null);
 		return;
