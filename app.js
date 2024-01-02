@@ -51,6 +51,7 @@ function log(text) {
 
 app.get('/get_groups_list', async (req, res, next) => {
 	const id = req.body.id;
+	log("Getting group list from " + id)
 	const version = req.body.v;
 	if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
 		res.send(null);
@@ -72,8 +73,7 @@ app.get('/get_groups_list', async (req, res, next) => {
 		res.send(data)
 	}
 	const obj = JSON.parse(fs.readFileSync('./groups.json', 'utf8'));
-	data.data = obj
-	res.send(data)
+	res.send(obj)
 })
 
 app.get('/get_license', async (req, res, next) => {
