@@ -1,3 +1,4 @@
+var fs = require('fs');
 const express = require('express');
 const mongoose = require("mongoose");
 const Request = require("./models/request.model")
@@ -47,6 +48,33 @@ async function getPseudoFromId(id) {
 function log(text) {
 	console.log(new Date().toJSON() + '\t' + text)
 }
+
+app.get('/get_groups_list', async (req, res, next) => {
+	const id = req.body.id;
+	const version = req.body.v;
+	if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
+		res.send(null);
+		return;
+	}
+	const data = await Request.findOne({ _id: id })
+	if (!data) {
+		res.send(data);
+		return;
+	}
+	let version_log = ''
+	if (version.localeCompare(data.v, undefined, {numeric: true, sensitivity: 'base'}) > 0) {
+		version_log = ' | Update from ' + data.v + ' to ' + version + ' detected'
+		data.v = version
+		data.save()
+	}
+	if (VERSION.localeCompare(version, undefined, { numeric: true, sensitivity: 'base' }) > 0) {
+		data.status = "UPDATE"
+		res.send(data)
+	}
+	const obj = JSON.parse(fs.readFileSync('./groups.json', 'utf8'));
+	data.data = obj
+	res.send(data)
+})
 
 app.get('/get_license', async (req, res, next) => {
 	const mac_address = req.body.mac_address;
