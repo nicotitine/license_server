@@ -1,5 +1,5 @@
 {
-    "archimonsters": [
+    "Archimonstres seulement": [
         "2270",
         "2271",
         "2272",
@@ -287,7 +287,7 @@
         "2615",
         "2616"
     ],
-    "grobe_archimonsters": [
+    "Archimonstres grobe": [
         "2370",
         "2374",
         "2469",
@@ -302,7 +302,7 @@
         "2483",
         "2564"
     ],
-    "all": [
+    "Tous les monstres": [
         "31",
         "34",
         "36",
@@ -1539,13 +1539,13 @@
         "2615",
         "2616"
     ],
-    "dopeul_dark_vlad":[
+    "Dopeul Dark Vlad":[
         "422"
     ],
-    "dark_vlad": [
+    "Dark Vlad": [
         "107"
     ],
-    "renarbo": [
+    "Renarbo": [
         "820"
     ]
 }
