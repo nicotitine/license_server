@@ -39,18 +39,23 @@ const io = new Server(server, {
 });
 
 const databaseChanged = async (event) => {
-  const documentKey = event.documentKey._id.toString();
-  const updatedFields = event.updateDescription.updatedFields;
-  if (!Object.keys(updatedFields).includes("status")) return;
-  const status = updatedFields.status;
+  try {
+    const documentKey = event.documentKey._id.toString();
+    if (!event.updateDescription) return;
+    const updatedFields = event.updateDescription.updatedFields;
+    if (!Object.keys(updatedFields).includes("status")) return;
+    const status = updatedFields.status;
 
-  if (status === "VALIDATED") return;
+    if (status === "VALIDATED") return;
 
-  const socket = findSocketById(documentKey)?.socket;
-  if (!socket) return;
+    const socket = findSocketById(documentKey)?.socket;
+    if (!socket) return;
 
-  socket.emit("status_updated", status);
-  log("database status changed for " + documentKey + ", " + socket.pseudo)
+    socket.emit("status_updated", status);
+    log("database status changed for " + documentKey + ", " + socket.pseudo)
+  } catch (e) {
+    log("failed to process database event " + event)
+  }
 };
 
 const requestEventEmitter = Request.watch();
