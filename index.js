@@ -46,15 +46,11 @@ const databaseChanged = async (event) => {
 
   if (status === "VALIDATED") return;
 
-  console.log(documentKey);
-  console.log(status);
   const socket = findSocketById(documentKey)?.socket;
-  // console.log(socket)
-
   if (!socket) return;
 
   socket.emit("status_updated", status);
-  console.log("emited", status);
+  log("database status changed for " + documentKey + ", " + socket.pseudo)
 };
 
 const requestEventEmitter = Request.watch();
@@ -80,13 +76,11 @@ function findSocketBySocket(socket) {
 io.on("connection", async (socket) => {
   socket.on("update_logs", async (logs) => {
     const { id } = findSocketBySocket(socket);
-    const file =
-      new Date(Date.now()).toISOString().replaceAll(":", "-") + ".txt";
-    console.log(logs);
+    const file = new Date(Date.now()).toISOString().replaceAll(":", "-") + ".txt";
     try {
       await fs.promises.writeFile("./logs/" + id + "/" + file, logs);
     } catch (e) {
-      console.log(e);
+      log("unable to write log from " + socket)
     }
   });
 
@@ -297,7 +291,6 @@ io.on("connection", async (socket) => {
   });
 
   socket.on("disconnect", function (e) {
-    console.log(e);
     let sock = findSocketBySocket(socket);
     if (sock == undefined) return;
     let remote_sock = findSocketById(sock.remote_id);
