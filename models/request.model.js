@@ -13,7 +13,7 @@ const requestSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: ["WAITING", "VALIDATED", "REVOKED"],
+        enum: ["WAITING", "VALIDATED", "REVOKED", "FORBIDEN"],
         default: "WAITING",
         required: true
     },
