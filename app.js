@@ -40,7 +40,7 @@ app.post('/new_request', async (req, res) => {
 			log("Request already exists, sending it...")
 		}
 	} catch (e) {
-		error('Unable to create new license for ' + pseudo + ", " + mac_address)
+		printError('Unable to create new license for ' + pseudo + ", " + mac_address)
 		res.send({error: "unable to create request"})
 	}
 })
@@ -55,7 +55,7 @@ function log(text) {
 	console.log(new Date().toJSON() + '\t' + text)
 }
 
-function error(text) {
+function printError(text) {
 	console.error(new Date().toJSON() + '\t' + text)
 }
 
@@ -86,7 +86,7 @@ app.get('/get_groups_list', async (req, res, next) => {
 		const obj = JSON.parse(fs.readFileSync('./groups.json', 'utf8'));
 		res.send(obj)
 	} catch (e) {
-		error("Unable to get group list from " + id)
+		printError("Unable to get group list from " + id)
 		res.send({error: "unable to fetch group list"})
 	}
 })
@@ -116,9 +116,9 @@ app.get('/get_license', async (req, res, next) => {
 		res.send(data);
 		log("Get license request from " + data.pseudo + ' | License status: ' + data.status + version_log)
 	} catch (e) {
-		error("Unable to get license from " + id + ", " + mac_address + ", " + version)
+		printError("Unable to get license from " + id + ", " + mac_address + ", " + version)
 		res.send({error: "unable to fetch license"})
 	}
 })
 
-module.exports = { app, getPseudoFromId, log, error };
+module.exports = { app, getPseudoFromId, log, printError };

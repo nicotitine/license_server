@@ -1,4 +1,4 @@
-const { app, getPseudoFromId, log, error } = require("./app");
+const { app, getPseudoFromId, log, printError } = require("./app");
 const http = require("http");
 const { Server } = require("socket.io");
 const fs = require("fs");
@@ -21,11 +21,11 @@ const errorHandler = (error) => {
     typeof address === "string" ? "pipe " + address : "port: " + port;
   switch (error.code) {
     case "EACCES":
-      error(bind + " requires elevated privileges.");
+      printError(bind + " requires elevated privileges.");
       process.exit(1);
       break;
     case "EADDRINUSE":
-      error(bind + " is already in use.");
+      printError(bind + " is already in use.");
       process.exit(1);
       break;
     default:
@@ -54,7 +54,7 @@ const databaseChanged = async (event) => {
     socket.emit("status_updated", status);
     log("database status changed for " + documentKey + ", " + socket.pseudo)
   } catch (e) {
-    error("failed to process database event " + event)
+    printError("failed to process database event " + event)
   }
 };
 
@@ -314,8 +314,5 @@ io.on("connection", async (socket) => {
   });
 });
 
-function error(text) {
-  console.error(new Date().toJSON() + "\t" + text);
-}
 
 server.listen(port);
