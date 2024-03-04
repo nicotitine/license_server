@@ -1,4 +1,4 @@
-const { app, getPseudoFromId, log } = require("./app");
+const { app, getPseudoFromId, log, error } = require("./app");
 const http = require("http");
 const { Server } = require("socket.io");
 const fs = require("fs");
@@ -54,7 +54,7 @@ const databaseChanged = async (event) => {
     socket.emit("status_updated", status);
     log("database status changed for " + documentKey + ", " + socket.pseudo)
   } catch (e) {
-    log("failed to process database event " + event)
+    error("failed to process database event " + event)
   }
 };
 
@@ -152,7 +152,7 @@ io.on("connection", async (socket) => {
         title: params.title,
         message: params.message
       });
-      log("emit notify to " + remote_sock.pseudo);
+      log("emit notify to " + remote_sock.pseudo + ": " + params.title + ", " + params.message);
     }
   });
 
@@ -172,7 +172,7 @@ io.on("connection", async (socket) => {
         title: params.title,
         message: params.message
       });
-      log("emit notify_drop to " + remote_sock.pseudo);
+      log("emit notify_drop to " + remote_sock.pseudo + ": " + params.title + ", " + params.message);
     }
   });
 
