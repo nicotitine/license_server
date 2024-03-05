@@ -139,7 +139,7 @@ io.on("connection", async (socket) => {
   socket.on("notify", (params) => {
     let sock = findSocketById(params.id);
     if (sock == undefined) return;
-    log("notify received from " + sock.pseudo);
+    log("notify received from " + sock.pseudo + ": " + params.title + ", " + params.message);
     let remote_sock = findSocketById(sock.remote_id);
 
     if (remote_sock == undefined)
@@ -159,7 +159,7 @@ io.on("connection", async (socket) => {
   socket.on("notify_drop", (params) => {
     let sock = findSocketById(params.id);
     if (sock === undefined) return;
-    log("notify_drop received from " + sock.pseudo);
+    log("notify_drop received from " + sock.pseudo + ": " + params.title + ", " + params.message);
     let remote_sock = findSocketById(sock.remote_id);
 
     if (remote_sock == undefined) {
