@@ -91,6 +91,38 @@ app.get('/get_groups_list', async (req, res, next) => {
 	}
 })
 
+app.get('/get_discord_list', async (req, res, next) => {
+	const id = req.body.id;
+	try {
+		log("Getting discord list from " + id)
+		const version = req.body.version
+		if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
+			res.send(null);
+			return;
+		}
+		const data = await Request.findOne({_id: id})
+		if (!data) {
+			res.send(data)
+			return
+		}
+		let version_log = ''
+		if (version.localeCompare(data.v, undefined, {numeric: true, sensitivity: 'base'}) > 0) {
+			version_log = ' | Update from ' + data.v + ' to ' + version + ' detected'
+			data.v = version
+			data.save()
+		}
+		if (VERSION.localeCompare(version, undefined, { numeric: true, sensitivity: 'base' }) > 0) {
+			data.status = "UPDATE"
+			res.send(data)
+		}
+		const obj = JSON.parse(fs.readFileSync('./dicord.json', 'utf8'))
+		res.send(obj)
+	} catch (e) {
+		printError("Unable to get discord list from " + id)
+		res.send({error: "unable to fetch discord list"})
+	}
+})
+
 app.get('/get_license', async (req, res, next) => {
 	const mac_address = req.body.mac_address;
 	const id = req.body.id;
