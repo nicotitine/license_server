@@ -95,12 +95,13 @@ app.get('/get_discord_list', async (req, res, next) => {
 	const id = req.body.id;
 	try {
 		log("Getting discord list from " + id)
-		const version = req.body.version
+		const version = req.body.v
 		if (id == null || !id.match(/^[0-9a-fA-F]{24}$/)) {
 			res.send(null);
 			return;
 		}
 		const data = await Request.findOne({_id: id})
+		console.log(data)
 		if (!data) {
 			res.send(data)
 			return
@@ -115,7 +116,8 @@ app.get('/get_discord_list', async (req, res, next) => {
 			data.status = "UPDATE"
 			res.send(data)
 		}
-		const obj = JSON.parse(fs.readFileSync('./dicord.json', 'utf8'))
+		console.log("trying to parse")
+		const obj = JSON.parse(fs.readFileSync('./discord.json', 'utf8'))
 		res.send(obj)
 	} catch (e) {
 		printError("Unable to get discord list from " + id)
