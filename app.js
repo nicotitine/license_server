@@ -4,6 +4,9 @@ const mongoose = require("mongoose");
 const Request = require("./models/request.model")
 const bodyParser = require('body-parser');
 const helmet = require("helmet")
+const nacl = require("tweetnacl");
+const utils = require("tweetnacl-util");
+const encodeBase64 = utils.encodeBase64;
 require('dotenv').config();
 const VERSION = process.env.VERSION
 
@@ -101,7 +104,6 @@ app.get('/get_discord_list', async (req, res, next) => {
 			return;
 		}
 		const data = await Request.findOne({_id: id})
-		console.log(data)
 		if (!data) {
 			res.send(data)
 			return
@@ -116,9 +118,21 @@ app.get('/get_discord_list', async (req, res, next) => {
 			data.status = "UPDATE"
 			res.send(data)
 		}
-		console.log("trying to parse")
-		const obj = JSON.parse(fs.readFileSync('./discord.json', 'utf8'))
-		res.send(obj)
+		try {
+			const version = req.body.v;
+			log(`Getting discord list from v${version}`);
+			const obj = JSON.parse(fs.readFileSync("./discord.json", "utf8"));
+			const data = {
+			  token: process.env.DISCORD_TOKEN,
+			  channels: obj,
+			};
+			const encrypted = encrypt(JSON.stringify(data));
+			res.send(encrypted);
+		  } catch (e) {
+			printError("Unable to get discord list");
+			printError(e);
+			res.send({ error: "unable to fetch discord list" });
+		  }
 	} catch (e) {
 		printError("Unable to get discord list from " + id)
 		res.send({error: "unable to fetch discord list"})
@@ -154,5 +168,13 @@ app.get('/get_license', async (req, res, next) => {
 		res.send({error: "unable to fetch license"})
 	}
 })
+
+function encrypt(data) {
+	const nonce = nacl.randomBytes(24);
+	const secretKey = Buffer.from(process.env.SEED, "utf-8");
+	const sData = Buffer.from(data, "utf-8");
+	const encrypted = nacl.secretbox(sData, nonce, secretKey);
+	return `${encodeBase64(nonce)}:${encodeBase64(encrypted)}`;
+  }
 
 module.exports = { app, getPseudoFromId, log, printError };
