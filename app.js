@@ -11,6 +11,7 @@ require('dotenv').config();
 const VERSION = process.env.VERSION
 
 mongoose.connect(process.env.MONGO_DB_URL, { useNewUrlParser: true });
+process.title = "license_server"
 
 const app = express();
 
